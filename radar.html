@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Radar Chart</title>
+		<script src="../../dist/Chart.bundle.js"></script>
+		<script src="../utils.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+
+		<style>
+			canvas {
+				-moz-user-select: none;
+				-webkit-user-select: none;
+				-ms-user-select: none;
+			}
+
+			.qn {
+				display: none;
+			}
+			.qn:first-child {
+				display: block;
+			}
+			input[type='submit'] {
+				display: none;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="container">
+			<form action="" id="theform">
+				<div class="qn 1st">
+					<p>Qn 1</p>
+					<input type="radio" name="qn1" id="one" value="one" /> <label for="one">one</label> <br />
+					<input type="radio" name="qn1" id="two" value="two" /> <label for="two">two</label>
+				</div>
+				<div class="qn 2nd">
+					<p>Qn 2</p>
+					<input type="radio" name="qn2" id="yes" value="yes" /> <label for="yes">yes</label> <br />
+					<input type="radio" name="qn2" id="no" value="no" /> <label for="no">no</label> <br />
+					<input type="radio" name="qn2" id="neutral" value="neutral" /> <label for="neutral">neutral</label>
+				</div>
+				<div class="qn 3rd">
+					<p>Qn 3</p>
+					<input type="radio" name="qn3" id="ohyeah" value="ohyeah" /> <label for="ohyeah">ohyeah</label>
+					<br />
+					<input type="radio" name="qn3" id="ohno" value="ohno" /> <label for="ohno">ohno</label>
+				</div>
+				<button type="button" id="next">Next</button> <input type="submit" value="submit" />
+			</form>
+		</div>
+		<div style="width:100%"><canvas id="canvas"></canvas></div>
+
+		<!-- <button id="randomizeData">Randomize Data</button>
+	<button id="addDataset">Add Dataset</button>
+	<button id="removeDataset">Remove Dataset</button>
+	<button id="addData">Add Data</button>
+	<button id="removeData">Remove Data</button> -->
+
+		<!-- // mine -->
+		<script>
+			var randomScalingFactor = function() {
+				return Math.round(Math.random() * 100)
+			}
+
+			var color = Chart.helpers.color
+			var config = {
+				type: 'radar',
+				data: {
+					labels: [['Dog', 'Person'], ['Cat', 'Person'], 'Fish', ['No', 'animal'], 'Lion'],
+					datasets: [
+						{
+							label: 'My First dataset',
+							backgroundColor: color(window.chartColors.red)
+								.alpha(0.2)
+								.rgbString(),
+							borderColor: window.chartColors.red,
+							pointBackgroundColor: window.chartColors.red,
+							data: [
+								randomScalingFactor(),
+								randomScalingFactor(),
+								randomScalingFactor(),
+								randomScalingFactor(),
+								randomScalingFactor()
+							]
+						}
+					]
+				},
+				options: {
+					legend: {
+						position: 'top'
+					},
+					title: {
+						display: true,
+						text: 'Chart.js Radar Chart'
+					},
+					scale: {
+						ticks: {
+							beginAtZero: true
+						}
+					}
+				}
+			}
+
+			window.onload = function() {
+				window.myRadar = new Chart(document.getElementById('canvas'), config)
+			}
+
+			document.getElementById('randomizeData').addEventListener('click', function() {
+				config.data.datasets.forEach(function(dataset) {
+					dataset.data = dataset.data.map(function() {
+						return randomScalingFactor()
+					})
+				})
+
+				window.myRadar.update()
+			})
+
+			var colorNames = Object.keys(window.chartColors)
+			document.getElementById('addDataset').addEventListener('click', function() {
+				var colorName = colorNames[config.data.datasets.length % colorNames.length]
+				var newColor = window.chartColors[colorName]
+
+				var newDataset = {
+					label: 'Dataset ' + config.data.datasets.length,
+					borderColor: newColor,
+					backgroundColor: color(newColor)
+						.alpha(0.2)
+						.rgbString(),
+					pointBorderColor: newColor,
+					data: []
+				}
+
+				for (var index = 0; index < config.data.labels.length; ++index) {
+					newDataset.data.push(randomScalingFactor())
+				}
+
+				config.data.datasets.push(newDataset)
+				window.myRadar.update()
+			})
+
+			document.getElementById('addData').addEventListener('click', function() {
+				if (config.data.datasets.length > 0) {
+					config.data.labels.push('dataset #' + config.data.labels.length)
+
+					config.data.datasets.forEach(function(dataset) {
+						dataset.data.push(randomScalingFactor())
+					})
+
+					window.myRadar.update()
+				}
+			})
+
+			document.getElementById('removeDataset').addEventListener('click', function() {
+				config.data.datasets.splice(0, 1)
+				window.myRadar.update()
+			})
+
+			document.getElementById('removeData').addEventListener('click', function() {
+				config.data.labels.pop() // remove the label first
+
+				config.data.datasets.forEach(function(dataset) {
+					dataset.data.pop()
+				})
+
+				window.myRadar.update()
+			})
+		</script>
+		<script>
+			$('#next').click(function() {
+				var current = $('.qn:visible'),
+					total = $('.qn').length,
+					last = $('.qn:last')
+				$(current)
+					.next()
+					.show()
+				$(current).hide()
+				if (
+					$(current)
+						.next()
+						.is(last)
+				) {
+					$('#next').hide()
+					$("input[type='submit']").show()
+				}
+			})
+		</script>
+	</body>
+</html>
